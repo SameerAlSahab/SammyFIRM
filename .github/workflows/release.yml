@@ -24,26 +24,41 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      # Publish Linux exec
+      - name: Install Native AOT dependencies
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      #  Publish Linux (Native AOT)
       - name: Publish Linux
-        run: dotnet publish ./SamFirm/SamFirm.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o ./dist/linux
+        run: |
+          dotnet publish ./SamFirm/SamFirm.csproj -c Release -r linux-x64 \
+          -p:PublishAot=true \
+          -p:StripSymbols=true \
+          -o ./dist/linux
 
-      # Publish macOS (Intel)
+      #  Publish macOS (Native AOT)
       - name: Publish macOS
-        run: dotnet publish ./SamFirm/SamFirm.csproj -c Release -r osx-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o ./dist/macos
+        run: |
+          dotnet publish ./SamFirm/SamFirm.csproj -c Release -r osx-x64 \
+          -p:PublishAot=true \
+          -p:StripSymbols=true \
+          -o ./dist/macos
 
-      # Publish Windows (Single File .exe)
+      #  Publish Windows 
       - name: Publish Windows
-        run: dotnet publish ./SamFirm/SamFirm.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o ./dist/windows
+        run: |
+          dotnet publish ./SamFirm/SamFirm.csproj -c Release -r win-x64 \
+          -p:PublishAot=true \
+          -p:StripSymbols=true \
+          -o ./dist/windows
 
-  
+
       - name: Prepare Artifacts
         run: |
           mv ./dist/linux/SamFirm ./SamFirm-linux-x64
           mv ./dist/macos/SamFirm ./SamFirm-macos-x64
           mv ./dist/windows/SamFirm.exe ./SamFirm-win-x64.exe
 
-      # Upload them 
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -52,4 +67,3 @@ jobs:
             SamFirm-linux-x64
             SamFirm-macos-x64
             SamFirm-win-x64.exe
-
