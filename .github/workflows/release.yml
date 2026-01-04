@@ -35,28 +35,10 @@ jobs:
           -p:StripSymbols=true \
           -o ./dist/linux
 
-      #  Publish macOS (Native AOT)
-      - name: Publish macOS
-        run: |
-          dotnet publish ./SamFirm/SamFirm.csproj -c Release -r osx-x64 \
-          -p:PublishAot=true \
-          -p:StripSymbols=true \
-          -o ./dist/macos
-
-      #  Publish Windows 
-      - name: Publish Windows
-        run: |
-          dotnet publish ./SamFirm/SamFirm.csproj -c Release -r win-x64 \
-          -p:PublishAot=true \
-          -p:StripSymbols=true \
-          -o ./dist/windows
-
 
       - name: Prepare Artifacts
         run: |
           mv ./dist/linux/SamFirm ./SamFirm-linux-x64
-          mv ./dist/macos/SamFirm ./SamFirm-macos-x64
-          mv ./dist/windows/SamFirm.exe ./SamFirm-win-x64.exe
 
 
       - name: Upload build artifacts
